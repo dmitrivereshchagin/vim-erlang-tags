@@ -17,7 +17,7 @@ call extend(s:undo_ftplugin, [
 nnoremap <buffer> <expr> <C-W><C-]>     erlang#tags#RHS(v:count1, 'stag')
 nnoremap <buffer> <expr> <C-W>]         erlang#tags#RHS(v:count1, 'stag')
 nnoremap <buffer> <expr> <C-W>g]        erlang#tags#RHS('stselect')
-nnoremap <buffer> <expr> <C-W>g<C-]>    erlang#tags#RHS('tjump')
+nnoremap <buffer> <expr> <C-W>g<C-]>    erlang#tags#RHS('stjump')
 
 call extend(s:undo_ftplugin, [
     \ 'silent! nunmap <buffer> <C-W><C-]>',
