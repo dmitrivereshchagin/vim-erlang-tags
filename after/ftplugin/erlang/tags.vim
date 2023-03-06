@@ -26,6 +26,14 @@ call extend(s:undo_ftplugin, [
     \ 'silent! nunmap <buffer> <C-W>g<C-]>',
     \])
 
+nnoremap <buffer> <expr> <C-W>}         erlang#tags#RHS(v:count1, 'ptag')
+nnoremap <buffer> <expr> <C-W>g}        erlang#tags#RHS('ptjump')
+
+call extend(s:undo_ftplugin, [
+    \ 'silent! nunmap <buffer> <C-W>}',
+    \ 'silent! nunmap <buffer> <C-W>g}',
+    \])
+
 if exists('b:undo_ftplugin')
   call insert(s:undo_ftplugin, b:undo_ftplugin)
 endif
