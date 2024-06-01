@@ -89,8 +89,11 @@
                          CRE
                  end).
 
--define(RE_FUNCTIONS,
+-define(RE_FUNCTIONS1,
         ?COMPILE("^([a-z][a-zA-Z0-9_@]*)\\s*\\(")).
+
+-define(RE_FUNCTIONS2,
+        ?COMPILE("^'([^ \\t']+)'\\s*\\(")).
 
 -define(RE_TYPESPECS1,
         ?COMPILE("^-\\s*(type|opaque)\\s*([a-zA-Z0-9_@]+)\\b")).
@@ -632,9 +635,16 @@ add_tags_from_file(File, EtsTags, Verbose) ->
       ModName :: string().
 scan_tags(Contents, {EtsTags, File, ModName}) ->
     scan_tags_core(
-      Contents, ?RE_FUNCTIONS,
+      Contents, ?RE_FUNCTIONS1,
       fun([_, FuncName]) ->
-              add_func_tags(EtsTags, File, ModName, FuncName)
+              InnerPattern = [FuncName, "\\>"],
+              add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern)
+      end),
+    scan_tags_core(
+      Contents, ?RE_FUNCTIONS2,
+      fun([_, FuncName]) ->
+              InnerPattern = [$', FuncName, $'],
+              add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern)
       end),
     scan_tags_core(
       Contents, ?RE_TYPESPECS1,
@@ -713,23 +723,25 @@ add_file_tag(EtsTags, File, BaseName, ModName) ->
 %% @doc Add a tag about a function definition.
 %% @end
 %%------------------------------------------------------------------------------
--spec add_func_tags(EtsTags, File, ModName, FuncName) -> ok when
+-spec add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern) -> ok when
       EtsTags :: ets:tid(),
       File :: file:filename(),
       ModName :: string(),
-      FuncName :: binary().
-add_func_tags(EtsTags, File, ModName, FuncName) ->
+      FuncName :: binary(),
+      InnerPattern :: iolist().
+add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern) ->
 
     log("Function definition found: ~s~n", [FuncName]),
 
+    Pattern = ["/^", InnerPattern, $/],
+
     % Global entry:
     % mymod:f <tab> ./mymod.erl <tab> /^f\>/
-    add_tag(EtsTags, [ModName, ":", FuncName], File, ["/^", FuncName, "\\>/"],
-            global, $f),
+    add_tag(EtsTags, [ModName, ":", FuncName], File, Pattern, global, $f),
 
     % Static (or local) entry:
     % f <tab> ./mymod.erl <tab> /^f\>/ <space><space> ;" <tab> file:
-    add_tag(EtsTags, FuncName, File, ["/^", FuncName, "\\>/"], local, $f).
+    add_tag(EtsTags, FuncName, File, Pattern, local, $f).
 
 %%------------------------------------------------------------------------------
 %% @doc Add a tag about a type definition.
