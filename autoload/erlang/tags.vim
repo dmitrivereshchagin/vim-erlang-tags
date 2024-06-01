@@ -1,9 +1,9 @@
 function! s:NameUnderCursor() abort
   let l:iskeyword = &l:iskeyword
   setlocal iskeyword+=:,?
-  let l:ident = substitute(expand('<cword>'), '\M\C^?MODULE:', '', '')
+  let l:name = substitute(expand('<cword>'), '\M\C^?MODULE:', '', '')
   let &l:iskeyword = l:iskeyword
-  return l:ident
+  return l:name
 endfunction
 
 function! erlang#tags#RHS(command, ...) abort
