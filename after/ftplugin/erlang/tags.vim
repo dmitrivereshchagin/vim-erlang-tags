@@ -3,12 +3,6 @@ let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'execute')
 nnoremap <buffer> <expr> <C-]>  erlang#tags#RHS('tag', v:count1)
 let b:undo_ftplugin .= '|silent! nunmap <buffer> <C-]>'
 
-nnoremap <buffer> <expr> <C-LeftMouse>  erlang#tags#RHS('tag', v:count1)
-let b:undo_ftplugin .= '|silent! nunmap <buffer> <C-LeftMouse>'
-
-nnoremap <buffer> <expr> g<LeftMouse>  erlang#tags#RHS('tag', v:count1)
-let b:undo_ftplugin .= '|silent! nunmap <buffer> g<LeftMouse>'
-
 nnoremap <buffer> <expr> g]  erlang#tags#RHS('tselect')
 let b:undo_ftplugin .= '|silent! nunmap <buffer> g]'
 
