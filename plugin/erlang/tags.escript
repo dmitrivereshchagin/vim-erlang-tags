@@ -96,10 +96,10 @@
         ?COMPILE("^'([^ \\t']+)'\\s*\\(")).
 
 -define(RE_TYPESPECS1,
-        ?COMPILE("^-\\s*(type|opaque)\\s*([a-zA-Z0-9_@]+)\\b")).
+        ?COMPILE("^-\\s*(type|nominal|opaque)\\s*([a-zA-Z0-9_@]+)\\b")).
 
 -define(RE_TYPESPECS2,
-        ?COMPILE("^-\\s*(type|opaque)\\s*'([^ \\t']+)'")).
+        ?COMPILE("^-\\s*(type|nominal|opaque)\\s*'([^ \\t']+)'")).
 
 -define(RE_DEFINES1,
         ?COMPILE("^-\\s*(record|define)\\s*\\(?\\s*([a-zA-Z0-9_@]+)\\b")).
@@ -752,7 +752,7 @@ add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern) ->
       EtsTags :: ets:tid(),
       File :: file:filename(),
       ModName :: string(),
-      Attribute :: binary(), % "type" | "opaque"
+      Attribute :: binary(), % "type" | "nominal" | "opaque"
       TypeName :: binary(),
       InnerPattern :: iolist().
 add_type_tags(EtsTags, File, ModName, Attribute, TypeName, InnerPattern) ->
