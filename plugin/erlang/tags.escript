@@ -52,10 +52,10 @@
 %%%         myfile  ./myfile.erl  1;"  M
 %%%
 %%%     {FuncName, FilePath, local, $f} -> TagAddress
-%%%         f  ./mymod.erl  /^f\>/;"  f  file:
+%%%         f  ./mymod.erl  /^f\s\*(/;"  f  file:
 %%%
 %%%     {FuncName, FilePath, global, $f} -> TagAddress
-%%%         mymod:f  ./mymod.erl  /^f\>/;"  f
+%%%         mymod:f  ./mymod.erl  /^f\s\*(/;"  f
 %%%
 %%%     {Type, FilePath, local, $t} -> TagAddress
 %%%         mytype  ./mymod.erl  /^-type\s\*\<mytype\>/;"  t  file:
@@ -164,7 +164,7 @@
 %%
 %% See `:help tags-file-format' and search for `{tagaddress}'.
 %%
-%% Example: `/^myfunction\>/'.
+%% Example: `/^myfunction\s\*(/'.
 
 -type scope() :: global | local.
 %% Shows the scope of a tag. If a tag is local, then the editor should jump to
@@ -637,7 +637,7 @@ scan_tags(Contents, {EtsTags, File, ModName}) ->
     scan_tags_core(
       Contents, ?RE_FUNCTIONS1,
       fun([_, FuncName]) ->
-              InnerPattern = [FuncName, "\\>"],
+              InnerPattern = FuncName,
               add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern)
       end),
     scan_tags_core(
@@ -733,14 +733,14 @@ add_func_tags(EtsTags, File, ModName, FuncName, InnerPattern) ->
 
     log("Function definition found: ~s~n", [FuncName]),
 
-    Pattern = ["/^", InnerPattern, $/],
+    Pattern = ["/^", InnerPattern, "\\s\\*(/"],
 
     % Global entry:
-    % mymod:f <tab> ./mymod.erl <tab> /^f\>/
+    % mymod:f <tab> ./mymod.erl <tab> /^f\s\*(/
     add_tag(EtsTags, [ModName, ":", FuncName], File, Pattern, global, $f),
 
     % Static (or local) entry:
-    % f <tab> ./mymod.erl <tab> /^f\>/ <space><space> ;" <tab> file:
+    % f <tab> ./mymod.erl <tab> /^f\s\*(/ <space><space> ;" <tab> file:
     add_tag(EtsTags, FuncName, File, Pattern, local, $f).
 
 %%------------------------------------------------------------------------------
